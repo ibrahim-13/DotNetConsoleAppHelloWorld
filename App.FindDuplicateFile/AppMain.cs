@@ -27,6 +27,9 @@ namespace ConsoleAppHelloWorld.App.FindDuplicateFile
             }
         }
 
+        /// <summary>Find all duplicate files recursively in the given directory</summary>
+        /// <param name="directory">Target Directory</param>
+        /// <returns>A list with the grouped dupliate files</returns>
         private static Collection.List<Collection.List<string>> TryGetDuplicateFiles(string directory)
         {
             Collection.List<Collection.List<string>> duplicateFiles = new();
@@ -71,6 +74,9 @@ namespace ConsoleAppHelloWorld.App.FindDuplicateFile
             return duplicateFiles;
         }
 
+        /// <summary>Get files in the directory, including file in it's sub-directory</summary>
+        /// <param name="targetDirectory">Target Directory</param>
+        /// <param name="files">File list output</param>
         private static void TryGetDirectoryFiles(string targetDirectory, ref Collection.List<string> files)
         {
             try
@@ -101,7 +107,7 @@ namespace ConsoleAppHelloWorld.App.FindDuplicateFile
 
         /// <summary>Get MD5 Hash of the given path of a file</summary>
         /// <param name="filePath">File Path</param>
-        /// <param name="md5Hash">Variable where the MD5 Hash will be written</param>
+        /// <param name="md5Hash">MD5 Hash output</param>
         /// <returns>True if MD5 was generated successfully, false otherwise</returns>
         private static bool TryGetFileMd5Hash(string filePath, out string md5Hash)
         {
