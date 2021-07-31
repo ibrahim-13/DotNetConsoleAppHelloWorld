@@ -4,8 +4,9 @@
     {
         static void Main()
         {
-            // ConsoleAppHelloWorld.App.HelloWorld.AppMain.Run();
-            ConsoleAppHelloWorld.App.FindDuplicateFile.AppMain.Run();
+            // App.HelloWorld.AppMain.Run();
+            // App.FindDuplicateFile.AppMain.Run();
+            App.CsharpClassTest.AppMain.Run();
         }
     }
 }
