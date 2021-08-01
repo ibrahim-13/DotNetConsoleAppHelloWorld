@@ -27,23 +27,21 @@ namespace ConsoleAppHelloWorld.App.CsharpClassTest
                 if (method is not null)
                 {
                     bool hasAppended = false;
-                    if (method.IsPublic)
-                        SetMethodType(" Public");
-                    else if (method.IsPrivate)
-                        SetMethodType(" Private");
-                    else if (method.IsFamily)
-                        SetMethodType(" Protected");
-                    else if (method.IsAssembly)
-                        SetMethodType(" Internal");
-                    else if (method.IsFamilyOrAssembly)
-                        SetMethodType(" Protected Internal");
-                    if (method.IsStatic) SetMethodType(" Static");
-                    if (hasAppended) SetMethodType(", ");
-
+                    SetMethodType(method switch
+                    {
+                        Reflection.MethodBase { IsPublic: true } => "Public",
+                        Reflection.MethodBase { IsPrivate: true } => "Private",
+                        Reflection.MethodBase { IsFamily: true } => "Protected",
+                        Reflection.MethodBase { IsAssembly: true } => "Internal",
+                        Reflection.MethodBase { IsFamilyOrAssembly: true } => "Protected Internal",
+                        _ => "",
+                    });
+                    if (method.IsStatic) SetMethodType("Static");
+                    if (hasAppended) str.Append(", ");
 
                     void SetMethodType(string t)
                     {
-                        str.Append(t);
+                        str.Append($" {t}");
                         hasAppended = true;
                     }
                 }
