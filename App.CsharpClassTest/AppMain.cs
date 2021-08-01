@@ -34,15 +34,18 @@ namespace ConsoleAppHelloWorld.App.CsharpClassTest
                         Reflection.MethodBase { IsFamily: true } => "Protected",
                         Reflection.MethodBase { IsAssembly: true } => "Internal",
                         Reflection.MethodBase { IsFamilyOrAssembly: true } => "Protected Internal",
-                        _ => "",
+                        _ => null,
                     });
                     if (method.IsStatic) SetMethodType("Static");
                     if (hasAppended) str.Append(", ");
 
                     void SetMethodType(string t)
                     {
-                        str.Append($" {t}");
-                        hasAppended = true;
+                        if (t is not null)
+                        {
+                            str.Append($" {t}");
+                            hasAppended = true;
+                        }
                     }
                 }
                 str.Append($"Declared by {member.DeclaringType}");
