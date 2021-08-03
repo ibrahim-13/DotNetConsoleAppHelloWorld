@@ -39,7 +39,7 @@ namespace ConsoleAppHelloWorld.App.CsharpClassTest
                     if (method.IsStatic) SetMethodType("Static");
                     if (hasAppended) str.Append(", ");
 
-                    void SetMethodType(string t)
+                    void SetMethodType(string? t)
                     {
                         if (t is not null)
                         {

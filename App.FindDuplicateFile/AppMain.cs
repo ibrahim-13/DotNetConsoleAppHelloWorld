@@ -45,7 +45,7 @@ namespace ConsoleAppHelloWorld.App.FindDuplicateFile
                 foreach (string filePath in files)
                 {
                     Console.Write($"Total: {files.Count} - Remaining: {fileCount--}");
-                    if (TryGetFileMd5Hash(filePath, out string md5Hash))
+                    if (TryGetFileMd5Hash(filePath, out string? md5Hash) && md5Hash is not null)
                     {
                         if (md5ToFilePath.TryGetValue(md5Hash, out var existingList))
                         {
@@ -109,7 +109,7 @@ namespace ConsoleAppHelloWorld.App.FindDuplicateFile
         /// <param name="filePath">File Path</param>
         /// <param name="md5Hash">MD5 Hash output</param>
         /// <returns>True if MD5 was generated successfully, false otherwise</returns>
-        private static bool TryGetFileMd5Hash(string filePath, out string md5Hash)
+        private static bool TryGetFileMd5Hash(string filePath, out string? md5Hash)
         {
             using var md5 = System.Security.Cryptography.MD5.Create();
             try
