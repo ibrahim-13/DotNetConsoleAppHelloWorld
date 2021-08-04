@@ -7,6 +7,7 @@
             // App.HelloWorld.AppMain.Run();
             // App.FindDuplicateFile.AppMain.Run();
             App.CsharpClassTest.AppMain.Run();
+            // App.InstanceWithActivator.AppMain.Run();
         }
     }
 }
