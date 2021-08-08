@@ -15,10 +15,18 @@ namespace ConsoleAppHelloWorld.App.CsharpClassTest
 
         public static void GetMemberInfoFromClass(ref Type type)
         {
-            Reflection.BindingFlags flags = Reflection.BindingFlags.Instance | Reflection.BindingFlags.Static |
-                    Reflection.BindingFlags.Public | Reflection.BindingFlags.NonPublic | Reflection.BindingFlags.FlattenHierarchy;
+            Reflection.BindingFlags flags =
+                Reflection.BindingFlags.Instance
+                | Reflection.BindingFlags.Static
+                | Reflection.BindingFlags.Public
+                | Reflection.BindingFlags.NonPublic
+                | Reflection.BindingFlags.FlattenHierarchy;
             Reflection.MemberInfo[] memberInfos = type.GetMembers(flags);
-            Console.WriteLine($"----------\nType {type.Name} has {memberInfos.Length} members:\n----------");
+            Console.WriteLine(
+                $"----------\n" +
+                $"Type {type.Name} has {memberInfos.Length} members:" +
+                $"\n----------"
+               );
             foreach (var member in memberInfos)
             {
                 System.Text.StringBuilder str = new();
