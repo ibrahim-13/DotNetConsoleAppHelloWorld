@@ -8,7 +8,8 @@
             // App.FindDuplicateFile.AppMain.Run();
             // App.CsharpClassTest.AppMain.Run();
             // App.InstanceWithActivator.AppMain.Run();
-            App.NewVsOverride.AppMain.Run();
+            // App.NewVsOverride.AppMain.Run();
+            App.MagicOfLinq.AppMain.Run();
         }
     }
 }
