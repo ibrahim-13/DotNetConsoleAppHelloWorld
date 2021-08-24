@@ -6,19 +6,43 @@ namespace ConsoleAppHelloWorld.App.DeligatesAreDelicate
     {
         public static void Run()
         {
-            Logger logger = new();
-            string writer1(string msg)
-            {
-                Console.WriteLine($"Writer 1 :: {msg}");
-                return $"Writer 1 :: {msg}";
-            };
-            logger.LogWriter += writer1;
-            string writer2(string msg)
-            {
-                Console.WriteLine($"Writer 2 :: {msg}");
-                return $"Writer 2 :: {msg}";
-            }
-            logger.LogWriter += writer2;
+            LogPrinter logPrinter = new();
+            logPrinter.Print();
+        }
+    }
+
+    class LogPrinter
+    {
+        private Logger logger;
+
+        private string Writer1(string msg)
+        {
+            Console.WriteLine($"Writer 1 :: {msg}");
+            return $"Writer 1 :: {msg}";
+        }
+
+        private string Writer2(string msg)
+        {
+            Console.WriteLine($"Writer 2 :: {msg}");
+            return $"Writer 2 :: {msg}";
+        }
+
+        public LogPrinter()
+        {
+            logger = new();
+            logger.LogWriter += Writer1;
+            logger.LogWriter += Writer2;
+        }
+
+        ~LogPrinter()
+        {
+            System.Diagnostics.Trace.WriteLine("Removing");
+            logger.LogWriter -= Writer1;
+            logger.LogWriter -= Writer2;
+        }
+
+        public void Print()
+        {
             logger.WriteLog("This is a test 1");
             logger.WriteLog("This is a test 2");
         }
