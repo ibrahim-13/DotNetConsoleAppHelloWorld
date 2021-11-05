@@ -6,4 +6,24 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="EPPlus" Version="5.8.2" />
+	  <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\ExcelSample.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ExcelSample.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\ExcelSample.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ExcelSample.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>
