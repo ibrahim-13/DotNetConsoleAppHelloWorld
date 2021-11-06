@@ -17,12 +17,21 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ExcelSample.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Properties\Image.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Image.resx</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Update="Properties\ExcelSample.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ExcelSample.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Image.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Image.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 
