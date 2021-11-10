@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleAppHelloWorld.App.ExcelGenerate
+﻿namespace ConsoleAppHelloWorld.App.ExcelGenerate
 {
     public class AppMain
     {

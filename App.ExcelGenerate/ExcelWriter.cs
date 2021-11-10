@@ -79,9 +79,18 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                     .ToList()
                     .ForEach(cellBinding =>
                     {
-                        if (isStringValueType)
+                        if (isBool2dArray)
                         {
-                            var fieldValue = (field.GetValue(data) as string);
+                            var fieldValue = (field.GetValue(data) as bool[,]);
+                            sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
+                            {
+                                CellWriteMode.Checkbox => WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in fieldValue),
+                                _ => sheet.Cells[cellBinding.Cell].Value
+                            };
+                        }
+                        else if (isStringValueType)
+                        {
+                            var fieldValue = field?.GetValue(data)?.ToString() ?? string.Empty;
                             sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
                             {
                                 CellWriteMode.Write => fieldValue,
@@ -89,15 +98,6 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                                 CellWriteMode.Param => sheet.Cells[cellBinding.Cell].Value?
                                     .ToString()?
                                     .Replace(cellBinding.ParamTemplate, fieldValue),
-                                _ => sheet.Cells[cellBinding.Cell].Value
-                            };
-                        }
-                        else if (isBool2dArray)
-                        {
-                            var fieldValue = (field.GetValue(data) as bool[,]);
-                            sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
-                            {
-                                CellWriteMode.Checkbox => WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in fieldValue),
                                 _ => sheet.Cells[cellBinding.Cell].Value
                             };
                         }
