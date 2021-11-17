@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using OfficeOpenXml;
 
 namespace ConsoleAppHelloWorld.App.ExcelGenerate
@@ -69,11 +71,20 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                 return;
             var type = data.GetType();
 
-            foreach (var field in type.GetProperties())
+            var members = new List<MemberInfo>();
+            members.AddRange(type.GetProperties());
+            members.AddRange(type.GetFields());
+
+            foreach (var memberInfo in members)
             {
-                var attributes = Attribute.GetCustomAttributes(field);
-                var isStringValueType = field.PropertyType == typeof(string);
-                var isBool2dArray = field.PropertyType == typeof(bool[,]);
+                var attributes = Attribute.GetCustomAttributes(memberInfo);
+                var memberType = memberInfo switch
+                {
+                    FieldInfo fieldInfo => fieldInfo.FieldType,
+                    PropertyInfo propertyInfo => propertyInfo.PropertyType,
+                    _ => null
+                };
+                var isBool2dArray = memberType == typeof(bool[,]);
                 attributes
                     .OfType<CellBindingAttribute>()
                     .ToList()
@@ -81,23 +92,33 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                     {
                         if (isBool2dArray)
                         {
-                            var fieldValue = (field.GetValue(data) as bool[,]);
+                            var memberValue = memberInfo switch
+                            {
+                                FieldInfo info => (info.GetValue(data) as bool[,]),
+                                PropertyInfo pInfo => (pInfo.GetValue(data) as bool[,]),
+                                _ => null
+                            };
                             sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
                             {
-                                CellWriteMode.Checkbox => WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in fieldValue),
+                                CellWriteMode.Checkbox => WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in memberValue),
                                 _ => sheet.Cells[cellBinding.Cell].Value
                             };
                         }
-                        else if (isStringValueType)
+                        else
                         {
-                            var fieldValue = field?.GetValue(data)?.ToString() ?? string.Empty;
+                            var memberValue = memberInfo switch
+                            {
+                                FieldInfo info => info?.GetValue(data)?.ToString() ?? string.Empty,
+                                PropertyInfo pInfo => pInfo?.GetValue(data)?.ToString() ?? string.Empty,
+                                _ => null
+                            };
                             sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
                             {
-                                CellWriteMode.Write => fieldValue,
-                                CellWriteMode.Append => sheet.Cells[cellBinding.Cell].Value + " " + fieldValue,
+                                CellWriteMode.Write => memberValue,
+                                CellWriteMode.Append => sheet.Cells[cellBinding.Cell].Value + " " + memberValue,
                                 CellWriteMode.Param => sheet.Cells[cellBinding.Cell].Value?
                                     .ToString()?
-                                    .Replace(cellBinding.ParamTemplate, fieldValue),
+                                    .Replace(cellBinding.ParamTemplate, memberValue),
                                 _ => sheet.Cells[cellBinding.Cell].Value
                             };
                         }
@@ -136,7 +157,7 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                     return Properties.Image.CheckboxChecked;
             }
             catch (Exception)
-            {}
+            { }
 
             return Properties.Image.CheckboxUnchecked;
         }
