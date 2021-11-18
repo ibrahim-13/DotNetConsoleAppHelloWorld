@@ -7,6 +7,7 @@
             using var writer = new ExcelWriter(Properties.ExcelSample.XLSX);
             writer.Write(new TestData
             {
+                Names = new[] { "Name 1", "Name 2" },
                 WriteWholeCell = "Value1",
                 AppendCell = "Value2",
                 ParamCell = "Value3",
@@ -30,5 +31,7 @@
         public string? ParamCell { get; set; }
         [CellBinding("E1:F4", CellWriteMode.Checkbox)]
         public bool[,]? ListOfBool { get; set; }
+        [CellBinding("A6:F6")]
+        public string[] Names { get; set; }
     }
 }

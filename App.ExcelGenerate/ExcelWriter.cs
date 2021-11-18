@@ -54,8 +54,8 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
 
         public byte[] GetBytes(bool reopen = false)
         {
-            var xlsxBytes = Package?.GetAsByteArray();
-            Package = reopen && _sampleExcelStream != null ? new ExcelPackage(_sampleExcelStream) : null;
+            var xlsxBytes = Package?.GetAsByteArray() ?? Array.Empty<byte>();
+            Package = reopen ? new ExcelPackage(_sampleExcelStream) : null;
             return xlsxBytes;
         }
 
@@ -85,6 +85,7 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                     _ => null
                 };
                 var isBool2dArray = memberType == typeof(bool[,]);
+                var isStringArray = memberType == typeof(string[]);
                 attributes
                     .OfType<CellBindingAttribute>()
                     .ToList()
@@ -97,12 +98,18 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                                 FieldInfo info => (info.GetValue(data) as bool[,]),
                                 PropertyInfo pInfo => (pInfo.GetValue(data) as bool[,]),
                                 _ => null
-                            };
-                            sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
+                            } ?? new bool[,] { };
+                            WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in memberValue);
+                        }
+                        else if (isStringArray)
+                        {
+                            var memberValue = memberInfo switch
                             {
-                                CellWriteMode.Checkbox => WriteImageCheckboxOnRange(cellBinding.Cell, sheet, in memberValue),
-                                _ => sheet.Cells[cellBinding.Cell].Value
-                            };
+                                FieldInfo info => info.GetValue(data) as string[],
+                                PropertyInfo pInfo => pInfo.GetValue(data) as string[],
+                                _ => null
+                            } ?? Array.Empty<string>();
+                            WriteStringArrayOnRange(cellBinding.Cell, sheet, in memberValue);
                         }
                         else
                         {
@@ -126,7 +133,7 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
             }
         }
 
-        private string WriteImageCheckboxOnRange(string range, ExcelWorksheet sheet, in bool[,] values)
+        private void WriteImageCheckboxOnRange(string range, ExcelWorksheet sheet, in bool[,] values)
         {
             sheet.Cells[range].Value = string.Empty;
             var excelRange = sheet.Cells[range];
@@ -141,8 +148,22 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                 var img = sheet.Drawings.AddPicture(imgName, imgByte);
                 img.SetSize(_config.ImageWidth, _config.ImageHeight);
                 img.SetPosition(row, _config.OffsetTop, col, _config.OffsetLeft);
+                cell.Value = string.Empty;
             }
-            return string.Empty;
+        }
+
+        private void WriteStringArrayOnRange(string range, ExcelWorksheet sheet, in string[] values)
+        {
+            sheet.Cells[range].Value = string.Empty;
+            var excelRange = sheet.Cells[range];
+            var firstCell = excelRange.First();
+            foreach (var cell in sheet.Cells[range])
+            {
+                var indexCol = cell.Start.Column - firstCell.Start.Column;
+                if (indexCol >= values.Length)
+                    break;
+                cell.Value = values[indexCol];
+            }
         }
     }
 
