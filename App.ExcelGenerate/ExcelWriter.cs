@@ -115,8 +115,8 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                         {
                             var memberValue = memberInfo switch
                             {
-                                FieldInfo info => info?.GetValue(data)?.ToString() ?? string.Empty,
-                                PropertyInfo pInfo => pInfo?.GetValue(data)?.ToString() ?? string.Empty,
+                                FieldInfo info => info.GetValue(data)?.ToString() ?? string.Empty,
+                                PropertyInfo pInfo => pInfo.GetValue(data)?.ToString() ?? string.Empty,
                                 _ => null
                             };
                             sheet.Cells[cellBinding.Cell].Value = cellBinding.Mode switch
@@ -174,11 +174,13 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
             try
             {
                 var value = values[indexRow, indexCol];
-                if (value == true)
+                if (value)
                     return Properties.Image.CheckboxChecked;
             }
             catch (Exception)
-            { }
+            {
+                // ignored
+            }
 
             return Properties.Image.CheckboxUnchecked;
         }
