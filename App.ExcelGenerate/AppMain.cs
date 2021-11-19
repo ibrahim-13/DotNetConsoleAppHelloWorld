@@ -6,7 +6,13 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
     {
         public static void Run()
         {
-            using var writer = new ExcelWriter(AppResources.ServiceLogSample);
+            using var writer = new ExcelWriter(
+                new ExcelWriterConfig
+                {
+                    GetTemplate = () => AppResources.ServiceLogSample,
+                    GetImageChecked = () => AppResources.CheckboxChecked,
+                    GetImageUnchecked = () => AppResources.CheckboxUnchecked,
+                });
             writer.Write(new TestData
             {
                 Names = new[] { "Name 1", "Name 2" },

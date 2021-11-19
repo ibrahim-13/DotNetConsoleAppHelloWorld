@@ -14,6 +14,9 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
         public int ImageWidth = 13;
         public int OffsetTop = 2;
         public int OffsetLeft = 15;
+        public Func<byte[]?> GetTemplate = () => null;
+        public Func<Bitmap?> GetImageChecked = () => null;
+        public Func<Bitmap?> GetImageUnchecked = () => null;
     }
 
     public class ExcelWriter : IDisposable
@@ -24,16 +27,20 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
 
         static ExcelWriter() => ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        public ExcelWriter(byte[]? fileFromResourceBytes)
-        {
-            if (fileFromResourceBytes is null) return;
-            _sampleExcelStream = new MemoryStream(fileFromResourceBytes);
-            Package = new ExcelPackage(_sampleExcelStream);
-        }
-
-        public ExcelWriter(byte[]? fileFromResourceBytes, ExcelWriterConfig config) : this(fileFromResourceBytes)
+        public ExcelWriter(ExcelWriterConfig config)
         {
             _config = config;
+            var templateFile = config.GetTemplate();
+            if (templateFile is null)
+            {
+                Package = new ExcelPackage();
+                Package.Workbook.Worksheets.Add("Default");
+            }
+            else
+            {
+                _sampleExcelStream = new MemoryStream(templateFile);
+                Package = new ExcelPackage(_sampleExcelStream);
+            }
         }
 
         public void Dispose()
@@ -140,11 +147,14 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
             var firstCell = excelRange.First();
             foreach (var cell in sheet.Cells[range])
             {
-                var (row, col) = (cell.Start.Row - 1, cell.Start.Column - 1);
                 var (indexRow, indexCol) = (cell.Start.Row - firstCell.Start.Row,
                     cell.Start.Column - firstCell.Start.Column);
+                var imgByte = GetImageBasedOnState(values, indexRow, indexCol);
+                if (imgByte == null)
+                    throw new Exception("Resource for check and uncheck state could not be found");
+
+                var (row, col) = (cell.Start.Row - 1, cell.Start.Column - 1);
                 var imgName = $"img{row}{col}";
-                var imgByte = values.GetImageBasedOnState(indexRow, indexCol);
                 var img = sheet.Drawings.AddPicture(imgName, imgByte);
                 img.SetSize(_config.ImageWidth, _config.ImageHeight);
                 img.SetPosition(row, _config.OffsetTop, col, _config.OffsetLeft);
@@ -165,24 +175,21 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
                 cell.Value = values[indexCol];
             }
         }
-    }
 
-    static class Extension
-    {
-        public static Bitmap GetImageBasedOnState(this bool[,] values, int indexRow, int indexCol)
+        public Bitmap? GetImageBasedOnState(in bool[,] values, int indexRow, int indexCol)
         {
             try
             {
                 var value = values[indexRow, indexCol];
                 if (value)
-                    return AppResources.CheckboxChecked;
+                    return _config.GetImageChecked();
             }
             catch (Exception)
             {
                 // ignored
             }
 
-            return AppResources.CheckboxUnchecked;
+            return _config.GetImageUnchecked();
         }
     }
 }
