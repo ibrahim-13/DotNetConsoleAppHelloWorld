@@ -1,10 +1,12 @@
-﻿namespace ConsoleAppHelloWorld.App.ExcelGenerate
+﻿using System;
+
+namespace ConsoleAppHelloWorld.App.ExcelGenerate
 {
     public class AppMain
     {
         public static void Run()
         {
-            using var writer = new ExcelWriter(Properties.ExcelSample.XLSX);
+            using var writer = new ExcelWriter(AppResources.ServiceLogSample);
             writer.Write(new TestData
             {
                 Names = new[] { "Name 1", "Name 2" },

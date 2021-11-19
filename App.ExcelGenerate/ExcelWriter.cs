@@ -175,14 +175,14 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
             {
                 var value = values[indexRow, indexCol];
                 if (value)
-                    return Properties.Image.CheckboxChecked;
+                    return AppResources.CheckboxChecked;
             }
             catch (Exception)
             {
                 // ignored
             }
 
-            return Properties.Image.CheckboxUnchecked;
+            return AppResources.CheckboxUnchecked;
         }
     }
 }
