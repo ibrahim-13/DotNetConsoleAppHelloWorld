@@ -31,10 +31,10 @@ namespace ConsoleAppHelloWorld.App.ExcelGenerate
         {
             _config = config;
             var templateFile = config.GetTemplate();
-            if (templateFile is null)
+            if (templateFile is null || templateFile.Length < 1)
             {
                 Package = new ExcelPackage();
-                Package.Workbook.Worksheets.Add("Default");
+                Package.Workbook.Worksheets.Add("0");
             }
             else
             {
