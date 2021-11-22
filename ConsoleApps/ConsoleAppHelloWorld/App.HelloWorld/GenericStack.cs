@@ -1,6 +1,10 @@
-﻿namespace ConsoleAppHelloWorld.App.HelloWorld.Stack
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("ConsoleAppHelloWorldTest")]
+
+namespace ConsoleAppHelloWorld.App.HelloWorld.Stack
 {
-    class GenericStack<T>
+    internal class GenericStack<T>
     {
         private Entry entry;
 
